@@ -3,9 +3,13 @@ package com.example.a03bbundle_sharedpreferences;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.prefs.PreferencesFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,19 +25,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onPause() {
+        super.onPause();
 
-        outState.putString("Usuario", tilUsuario.getEditText().getText().toString());
-        outState.putString("Email", tilEmail.getEditText().getText().toString());
-        super.onSaveInstanceState(outState);
+        SharedPreferences sharedPreferences = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editorDatos = sharedPreferences.edit();
+
+        String usuario = tilUsuario.getEditText().getText().toString();
+        String email = tilEmail.getEditText().getText().toString();
+
+        editorDatos.putString("Usuario", usuario);
+        editorDatos.putString("Email", email);
+
+        editorDatos.commit();
     }
 
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
 
-        String usuario = savedInstanceState.getString("Usuario");
-        String email = savedInstanceState.getString("Email");
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+
+        String usuario = sharedPreferences.getString("Usuario", "");
+        String email = sharedPreferences.getString("Email", "");
 
         tilUsuario.getEditText().setText(usuario);
         tilEmail.getEditText().setText(email);
